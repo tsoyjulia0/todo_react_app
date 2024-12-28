@@ -9,7 +9,6 @@ import {
   Card,
   ActionIcon,
   Select,
-  DatePicker,
 } from "@mantine/core";
 import { useState, useRef, useEffect } from "react";
 import { MoonStars, Sun, Trash, Edit } from "tabler-icons-react";
@@ -31,14 +30,14 @@ export default function App() {
     getInitialValueInEffect: true,
   });
   const toggleColorScheme = (value) =>
-    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+      setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
   useHotkeys([["mod+J", () => toggleColorScheme()]]);
 
   const taskTitle = useRef("");
   const taskSummary = useRef("");
   const taskState = useRef("Not done");
-  const taskDeadline = useRef(null);
+  const taskDeadline = useRef("");
 
   function createOrEditTask() {
     const newTask = {
@@ -109,150 +108,151 @@ export default function App() {
   }, []);
 
   return (
-    <ColorSchemeProvider
-      colorScheme={colorScheme}
-      toggleColorScheme={toggleColorScheme}
-    >
-      <MantineProvider
-        theme={{ colorScheme, defaultRadius: "md" }}
-        withGlobalStyles
-        withNormalizeCSS
+      <ColorSchemeProvider
+          colorScheme={colorScheme}
+          toggleColorScheme={toggleColorScheme}
       >
-        <div className="App">
-          <Modal
-            opened={opened}
-            size={"md"}
-            title={editMode ? "Edit Task" : "New Task"}
-            withCloseButton={false}
-            onClose={resetModal}
-            centered
-          >
-            <TextInput
-              mt={"md"}
-              ref={taskTitle}
-              placeholder={"Task Title"}
-              required
-              label={"Title"}
-            />
-            <TextInput
-              ref={taskSummary}
-              mt={"md"}
-              placeholder={"Task Summary"}
-              label={"Summary"}
-            />
-            <Select
-              mt={"md"}
-              ref={taskState}
-              label={"State"}
-              data={["Done", "Not done", "Doing right now"]}
-              defaultValue="Not done"
-            />
-            <DatePicker
-              mt={"md"}
-              ref={taskDeadline}
-              label={"Deadline"}
-            />
-            <Group mt={"md"} position={"apart"}>
-              <Button onClick={resetModal} variant={"subtle"}>
-                Cancel
-              </Button>
-              <Button onClick={createOrEditTask}>
-                {editMode ? "Save Changes" : "Create Task"}
-              </Button>
-            </Group>
-          </Modal>
-
-          <Container size={550} my={40}>
-            <Group position={"apart"}>
-              <Title
-                sx={(theme) => ({
-                  fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-                  fontWeight: 900,
-                })}
-              >
-                My Tasks
-              </Title>
-              <ActionIcon
-                color={"blue"}
-                onClick={() => toggleColorScheme()}
-                size="lg"
-              >
-                {colorScheme === "dark" ? (
-                  <Sun size={16} />
-                ) : (
-                  <MoonStars size={16} />
-                )}
-              </ActionIcon>
-            </Group>
-            <Group mt={"md"}>
-              <Button onClick={() => handleSort("Done")}>Show "Done" first</Button>
-              <Button onClick={() => handleSort("Doing right now")}>
-                Show "Doing" first
-              </Button>
-              <Button onClick={() => handleSort("Not done")}>Show "Not done" first</Button>
-              <Button onClick={() => handleSort("deadline")}>
-                Sort by Deadline
-              </Button>
-            </Group>
-            <Group mt={"md"}>
-              <Button onClick={() => handleFilter("Done")}>Show only "Done"</Button>
-              <Button onClick={() => handleFilter("Doing right now")}>Show only "Doing"</Button>
-              <Button onClick={() => handleFilter("Not done")}>Show only "Not done"</Button>
-            </Group>
-            {getFilteredTasks().length > 0 ? (
-              getFilteredTasks().map((task, index) => (
-                <Card withBorder key={index} mt={"sm"}>
-                  <Group position={"apart"}>
-                    <Text weight={"bold"}>{task.title}</Text>
-                    <Group>
-                      <ActionIcon
-                        onClick={() => {
-                          setEditMode(true);
-                          setEditIndex(index);
-                          setOpened(true);
-                        }}
-                        color={"blue"}
-                        variant={"transparent"}
-                      >
-                        <Edit />
-                      </ActionIcon>
-                      <ActionIcon
-                        onClick={() => deleteTask(index)}
-                        color={"red"}
-                        variant={"transparent"}
-                      >
-                        <Trash />
-                      </ActionIcon>
-                    </Group>
-                  </Group>
-                  <Text color={"dimmed"} size={"md"} mt={"sm"}>
-                    {task.summary || "No summary provided."}
-                  </Text>
-                  <Text color={"dimmed"} size={"sm"}>
-                    State: {task.state}
-                  </Text>
-                  <Text color={"dimmed"} size={"sm"}>
-                    Deadline: {task.deadline || "No deadline set."}
-                  </Text>
-                </Card>
-              ))
-            ) : (
-              <Text size={"lg"} mt={"md"} color={"dimmed"}>
-                You have no tasks
-              </Text>
-            )}
-            <Button
-              onClick={() => {
-                setOpened(true);
-              }}
-              fullWidth
-              mt={"md"}
+        <MantineProvider
+            theme={{ colorScheme, defaultRadius: "md" }}
+            withGlobalStyles
+            withNormalizeCSS
+        >
+          <div className="App">
+            <Modal
+                opened={opened}
+                size={"md"}
+                title={editMode ? "Edit Task" : "New Task"}
+                withCloseButton={false}
+                onClose={resetModal}
+                centered
             >
-              New Task
-            </Button>
-          </Container>
-        </div>
-      </MantineProvider>
-    </ColorSchemeProvider>
+              <TextInput
+                  mt={"md"}
+                  ref={taskTitle}
+                  placeholder={"Task Title"}
+                  required
+                  label={"Title"}
+              />
+              <TextInput
+                  ref={taskSummary}
+                  mt={"md"}
+                  placeholder={"Task Summary"}
+                  label={"Summary"}
+              />
+              <Select
+                  mt={"md"}
+                  ref={taskState}
+                  label={"State"}
+                  data={["Done", "Not done", "Doing right now"]}
+                  defaultValue="Not done"
+              />
+              <TextInput
+                  mt={"md"}
+                  ref={taskDeadline}
+                  placeholder={"YYYY-MM-DD"}
+                  label={"Deadline"}
+              />
+              <Group mt={"md"} position={"apart"}>
+                <Button onClick={resetModal} variant={"subtle"}>
+                  Cancel
+                </Button>
+                <Button onClick={createOrEditTask}>
+                  {editMode ? "Save Changes" : "Create Task"}
+                </Button>
+              </Group>
+            </Modal>
+
+            <Container size={550} my={40}>
+              <Group position={"apart"}>
+                <Title
+                    sx={(theme) => ({
+                      fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+                      fontWeight: 900,
+                    })}
+                >
+                  My Tasks
+                </Title>
+                <ActionIcon
+                    color={"blue"}
+                    onClick={() => toggleColorScheme()}
+                    size="lg"
+                >
+                  {colorScheme === "dark" ? (
+                      <Sun size={16} />
+                  ) : (
+                      <MoonStars size={16} />
+                  )}
+                </ActionIcon>
+              </Group>
+              <Group mt={"md"}>
+                <Button onClick={() => handleSort("Done")}>Show "Done" first</Button>
+                <Button onClick={() => handleSort("Doing right now")}>
+                  Show "Doing" first
+                </Button>
+                <Button onClick={() => handleSort("Not done")}>Show "Not done" first</Button>
+                <Button onClick={() => handleSort("deadline")}>
+                  Sort by Deadline
+                </Button>
+              </Group>
+              <Group mt={"md"}>
+                <Button onClick={() => handleFilter("Done")}>Show only "Done"</Button>
+                <Button onClick={() => handleFilter("Doing right now")}>Show only "Doing"</Button>
+                <Button onClick={() => handleFilter("Not done")}>Show only "Not done"</Button>
+              </Group>
+              {getFilteredTasks().length > 0 ? (
+                  getFilteredTasks().map((task, index) => (
+                      <Card withBorder key={index} mt={"sm"}>
+                        <Group position={"apart"}>
+                          <Text weight={"bold"}>{task.title}</Text>
+                          <Group>
+                            <ActionIcon
+                                onClick={() => {
+                                  setEditMode(true);
+                                  setEditIndex(index);
+                                  setOpened(true);
+                                }}
+                                color={"blue"}
+                                variant={"transparent"}
+                            >
+                              <Edit />
+                            </ActionIcon>
+                            <ActionIcon
+                                onClick={() => deleteTask(index)}
+                                color={"red"}
+                                variant={"transparent"}
+                            >
+                              <Trash />
+                            </ActionIcon>
+                          </Group>
+                        </Group>
+                        <Text color={"dimmed"} size={"md"} mt={"sm"}>
+                          {task.summary || "No summary provided."}
+                        </Text>
+                        <Text color={"dimmed"} size={"sm"}>
+                          State: {task.state}
+                        </Text>
+                        <Text color={"dimmed"} size={"sm"}>
+                          Deadline: {task.deadline || "No deadline set."}
+                        </Text>
+                      </Card>
+                  ))
+              ) : (
+                  <Text size={"lg"} mt={"md"} color={"dimmed"}>
+                    You have no tasks
+                  </Text>
+              )}
+              <Button
+                  onClick={() => {
+                    setOpened(true);
+                  }}
+                  fullWidth
+                  mt={"md"}
+              >
+                New Task
+              </Button>
+            </Container>
+          </div>
+        </MantineProvider>
+      </ColorSchemeProvider>
   );
 }
